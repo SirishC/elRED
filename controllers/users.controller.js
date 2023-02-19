@@ -5,28 +5,28 @@ const otpGen = require('otp-generator');
 const nodemailer = require('nodemailer');
 const dotenv = require('dotenv').config();
 
-async function sendMail(email,otp){
-    const transporter = nodemailer.createTransport({
-        service:'hotmail',
-        auth:{
-            user:process.env.SENDER_EMAL,
-            pass:process.env.SENDER_PASSWORD
-        }
-    });
-    const options={
-        from:process.env.SENDER_EMAL,
-        to:email,
-        subject:"OTP verification",
-        text:`your OTP verification code is ${otp}`
-    }
-    transporter.sendMail(options,function(err, result){
-        if(err){
-            console.log(err);
-            return;
-        }
-        console.log("Sent OTP to "+ result.response);
-    })
-}
+// async function sendMail(email,otp, next){
+//     const transporter = nodemailer.createTransport({
+//         service:'hotmail',
+//         auth:{
+//             user:process.env.SENDER_EMAIL,
+//             pass:process.env.SENDER_PASSWORD
+//         }
+//     });
+//     const options={
+//         from:process.env.SENDER_EMAIL,
+//         to:email,
+//         subject:"OTP verification",
+//         text:`your OTP verification code is ${otp}`
+//     }
+//     transporter.sendMail(options,function(err, result){
+//         if(err){
+//             console.log(err);
+//             next();
+//         }
+//         console.log("Sent OTP to "+ result.response);
+//     })
+// }
 
 
 
@@ -74,7 +74,7 @@ const loginUser = (req,res)=>{
                             optGenerated.save()
                             .then(otp=>{
                                 // Sending mail 
-                                sendMail(user.email , newOTP);
+                                // sendMail(user.email , newOTP);
                                 res.status(200).json({'success':`otp ${newOTP} send successfully and will expires in 60 seconds`})
                             })
                             .catch(err=>{

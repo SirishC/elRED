@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const dotenv = require('dotenv').config();
+const nodemailer = require('nodemailer');
 const Schema = mongoose.Schema;
 const bcrypt = require('bcrypt');
 
@@ -19,11 +21,37 @@ const OTP = new Schema({
 })
 OTP.pre('save', async function(next){
     try{
+
+        //  Sending OTP Mail
+        const transporter = nodemailer.createTransport({
+            service:'hotmail',
+            auth:{
+                user:process.env.SENDER_EMAIL,
+                pass:process.env.SENDER_PASSWORD
+            }
+        });
+        const options={
+            from:process.env.SENDER_EMAIL,
+            to:this.email,
+            subject:"OTP verification",
+            text:`your OTP verification code is ${this.otp}`
+        }
+        transporter.sendMail(options,function(err, result){
+            if(err){
+                console.log(err);
+                next(err);
+            }else{
+                console.log("Sent OTP to "+ result.response);
+            }
+        })
+
+        // Hashing OTP and Saving for verification.
         const salt = await bcrypt.genSalt(8);
         const hashedOTP =  await bcrypt.hashSync(this.otp,salt);
         this.otp= hashedOTP;
         next();
     }catch(err){
+        console.log(err);
         next(err);
     }
 })

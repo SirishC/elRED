@@ -7,10 +7,12 @@ app.use(express.json());
 const mongoose = require('mongoose');
 
 // MongoDB Connectivity 
-mongoose.connect(process.env.MONGODB_CONNECTION,{
-    useNewUrlParser:true
+mongoose.connect(process.env.MONGODB_CONNECTION_DEV,{
+    useNewUrlParser:true,
+    useUnifiedTopology: true
 });
 const connection = mongoose.connection;
+connection.on("error", console.error.bind(console, "connection error: "));
 connection.once('open',()=>{
     console.log("Connected to MongoDB Successfully!");
 })
