@@ -23,6 +23,7 @@ OTP.pre('save', async function(next){
     try{
 
         //  Sending OTP Mail
+        console.log("Sending OTP Mail");
         const transporter = nodemailer.createTransport({
             service:'hotmail',
             auth:{
