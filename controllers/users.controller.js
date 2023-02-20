@@ -74,7 +74,7 @@ const loginUser = (req,res)=>{
                             optGenerated.save()
                             .then(otp=>{
                                 // Sending mail 
-                                // sendMail(user.email , newOTP);
+                                console.log("send otp mail... ");
                                 res.status(200).json({'success':`otp ${newOTP} send successfully and will expires in 60 seconds`})
                             })
                             .catch(err=>{
