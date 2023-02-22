@@ -15,16 +15,20 @@ const Users = new Schema({
             type:String,
             required:true
         },
-        task_date:{
-            type:Date,
-            required:true
-        },
         task_description:{
             type:String,
             required:true
         },
         task_status:{
             type:Boolean,
+            required:true
+        },
+        task_created_date:{
+            type:Date,
+            required:true
+        },
+        task_updated_date:{
+            type:Date,
             required:true
         }
     }

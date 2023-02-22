@@ -11,9 +11,10 @@ const createUserTask = (req,res)=>{
         {$push:{
             tasks:{
                 task_id:uuidv4(),
-                task_date: Date.now(),
                 task_description:req.body.task,
-                task_status:false
+                task_status:false,
+                task_created_date: Date.now(),
+                task_updated_date: Date.now()
             }
         }
     }, (error, document)=>{
@@ -77,7 +78,8 @@ const updateUserTask = (req,res) =>{
         { 
             $set: { 
                 "tasks.$.task_description":req.body.task_description,
-                "tasks.$.task_status":req.body.task_status
+                "tasks.$.task_status":req.body.task_status,
+                "tasks.$.task_updated_date":Date.now()
             } 
         },
    
