@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const dotenv = require('dotenv').config();
+require('dotenv').config();
 const cors = require('cors');
 app.use(cors());
 app.use(express.json());
@@ -20,8 +20,10 @@ connection.once('open',()=>{
 // Routers 
 
 const userRouter = require('./routers/users.router.js');
+const taskRouter = require('./routers/tasks.router.js');
  
 app.use('/api/users',userRouter);
+app.use('/api/task',taskRouter);
 const PORT = process.env.PORT || 3322;
 app.listen(PORT,()=>{
     console.log(`Application running on PORT: ${PORT}`);

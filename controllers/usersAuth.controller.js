@@ -2,33 +2,8 @@ const Users = require('../models/users.model.js');
 const OTP = require('../models/opt.model.js');
 const bcrypt = require('bcrypt');
 const otpGen = require('otp-generator');
-const nodemailer = require('nodemailer');
-const dotenv = require('dotenv').config();
-
-// async function sendMail(email,otp, next){
-//     const transporter = nodemailer.createTransport({
-//         service:'hotmail',
-//         auth:{
-//             user:process.env.SENDER_EMAIL,
-//             pass:process.env.SENDER_PASSWORD
-//         }
-//     });
-//     const options={
-//         from:process.env.SENDER_EMAIL,
-//         to:email,
-//         subject:"OTP verification",
-//         text:`your OTP verification code is ${otp}`
-//     }
-//     transporter.sendMail(options,function(err, result){
-//         if(err){
-//             console.log(err);
-//             next();
-//         }
-//         console.log("Sent OTP to "+ result.response);
-//     })
-// }
-
-
+require('dotenv').config();
+const jwt = require('jsonwebtoken');
 
 // user registration
 const registerUser = (req,res)=>{
@@ -103,7 +78,9 @@ const validateOTP =(req,res)=>{
         if(doc){
             bcrypt.compare(otp,doc.otp, function(err,result){
                 if(result){
-                    res.status(200).json({'success':'opt validation Successfull need to generate JWT token to access other APIs'});
+                    const user = {'name':email};
+                    const access_token = jwt.sign(user,process.env.SECRET_ACCESS_TOKEN,{ expiresIn: '1h' });
+                    res.status(200).json({'access_token':access_token});
                 }else{
                     res.status(400).json({'error':'OTP Invalid '});
                 }

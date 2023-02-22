@@ -9,8 +9,26 @@ const Users = new Schema({
     password:{
         type:String,
         required:true
+    },
+    tasks: [{
+        task_id:{
+            type:String,
+            required:true
+        },
+        task_date:{
+            type:Date,
+            required:true
+        },
+        task_description:{
+            type:String,
+            required:true
+        },
+        task_status:{
+            type:Boolean,
+            required:true
+        }
     }
-
+    ]
 })
 
 Users.pre('save', async function(next){
