@@ -61,18 +61,41 @@ const getUserTasks = (req,res)=>{
 
 }
 
-// // update tasks 
+// update tasks 
 
-// const updateUserTask = (req,res) =>{
-//     const user_email = req.user.name;
-//     const user = Users.findOne({email:user_email});
-//     if(!user) res.status(400).send({'failed':'user token expired '});
+const updateUserTask = (req,res) =>{
+    if(!req.body.task_id) res.status(400).send({'error':'task_id need to be send'});
+    else{
+    const user_email = req.user.name;
+    const user = Users.findOne({email:user_email});
+    if(!user) res.status(404).send({'failed': 'user doesnot exists'});
+    user.updateOne(
+        {
+            email:user_email,
+            'tasks.task_id':req.body.task_id
+        },
+        { 
+            $set: { 
+                "tasks.$.task_description":req.body.task_description,
+                "tasks.$.task_status":req.body.task_status
+            } 
+        },
+   
+   (error, document)=>{
+        if(error){
+            console.log(error)
+            res.status(400).send({'failed':'Failed to update the  tasks'})
+        };
+        if(!document.modifiedCount) res.status(400).send({'failed':'task with task id does not exists'});
+        else res.status(200).send({'success':'task updation successful'});
+    })
+    }
 
-
-// }
+}
 
 module.exports = {
     createUserTask,
     deleteUserTask,
-    getUserTasks
+    getUserTasks,
+    updateUserTask
 }
