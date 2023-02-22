@@ -4,7 +4,6 @@ const { v4: uuidv4 } = require('uuid');
 //  Create Task
 const createUserTask = (req,res)=>{
     const user_email = req.user.name;
-    console.log(user_email);
     const user = Users.findOne({email:user_email});
     if(!user) res.status(404).send({'failed': 'user doesnot exists'});
     user.updateOne(
@@ -28,7 +27,7 @@ const createUserTask = (req,res)=>{
 }
 
 // Delete Task
-const deleteUserTask = (req,res,next)=>{
+const deleteUserTask = (req,res)=>{
     const user_email = req.user.name;
     if(req.params.task_id==undefined) res.status(400).send({'error':'request must have a valid task id'});
     console.log(req.params.task_id);
@@ -48,7 +47,32 @@ const deleteUserTask = (req,res,next)=>{
     })
 }
 
+
+// get user tasks 
+
+const getUserTasks = (req,res)=>{
+    const user_email = req.user.name;
+    const user = Users.findOne({email:user_email},(error,document)=>{
+        if(error) res.status({'failed':'user doesnot exists'});
+        else{
+            res.status(200).send(document.tasks);
+        }
+    });
+
+}
+
+// // update tasks 
+
+// const updateUserTask = (req,res) =>{
+//     const user_email = req.user.name;
+//     const user = Users.findOne({email:user_email});
+//     if(!user) res.status(400).send({'failed':'user token expired '});
+
+
+// }
+
 module.exports = {
     createUserTask,
-    deleteUserTask
+    deleteUserTask,
+    getUserTasks
 }
