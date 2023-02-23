@@ -79,7 +79,7 @@ const validateOTP =(req,res)=>{
             bcrypt.compare(otp,doc.otp, function(err,result){
                 if(result){
                     const user = {'name':email};
-                    const access_token = jwt.sign(user,process.env.SECRET_ACCESS_TOKEN,{ expiresIn: '1h' });
+                    const access_token = jwt.sign(user,process.env.SECRET_ACCESS_TOKEN,{ expiresIn: '24h' });
                     res.status(200).json({'access_token':access_token});
                 }else{
                     res.status(400).json({'error':'OTP Invalid '});

@@ -52,11 +52,18 @@ const deleteUserTask = (req,res)=>{
 // get user tasks 
 
 const getUserTasks = (req,res)=>{
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const start = ( page - 1) * limit;
+
     const user_email = req.user.name;
-    const user = Users.findOne({email:user_email},(error,document)=>{
+    const user = Users.find(
+        {email:user_email},
+        {tasks:{$slice: [start, limit]},_id:0},
+        (error,document)=>{
         if(error) res.status({'failed':'user doesnot exists'});
         else{
-            res.status(200).send(document.tasks);
+            res.status(200).send(document[0].tasks);
         }
     });
 
@@ -96,9 +103,13 @@ const updateUserTask = (req,res) =>{
 }
 
 
-// sort tasks by date
+// sort tasks by latest update
 
 const sortTask = (req,res)=>{
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const start = ( page - 1) * limit;
+
     const user_email = req.user.name;
     const user = Users.findOne({email:user_email});
     if(!user) res.status(404).send({'failed': 'user doesnot exists'});
@@ -117,13 +128,25 @@ const sortTask = (req,res)=>{
             res.status(400).send({'failed':"failed to sort task by latest updated"});
         };
         if(!document.modifiedCount) res.status(400).send({'failed':'failed to sort'})
-        res.status(200).send({'success':'task sorted successful'});
+        Users.find(
+            {email:user_email},
+            {tasks:{$slice: [start, limit]},_id:0},
+            (error,document)=>{
+            if(error) res.status({'failed':'records not found !'});
+            else{
+                res.status(200).send(document[0].tasks);
+            }
+        });
     })
 
 }
 
 // Sort By User Order
 const sortByUser = (req,res)=>{
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const start = ( page - 1) * limit;
+
     const user_email = req.user.name;
     Users.findOne({email:user_email},(error,document)=>{
         if(error) res.status(404).send({'failed': 'user doesnot exists'});
@@ -153,7 +176,15 @@ const sortByUser = (req,res)=>{
                 $set:{tasks:user_reordered_list}
             },(error,document)=>{
                 if(error) res.status(400).send({"error":"task sort has not been updated"});
-                res.status(200).send(user_reordered_list);
+                Users.find(
+                    {email:user_email},
+                    {tasks:{$slice: [start, limit]},_id:0},
+                    (error,document)=>{
+                    if(error) res.status({'failed':'failed to get tasks'});
+                    else{
+                        res.status(200).send(document[0].tasks);
+                    }
+                });
             })
         
         });
