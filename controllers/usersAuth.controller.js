@@ -13,12 +13,12 @@ const registerUser = (req,res)=>{
                 let users = new Users(user);
                 users.save()
                     .then(user=>{
-                        res.status(200).json({
+                        res.status(201).json({
                             'success':'User has been added successfully'
                         });
                     })
                     .catch(err=>{
-                        res.status(400).json({'error':'failed to adding new user'});
+                        res.status(500).json({'error':' User registration failed'});
                     });
 
             }else{
@@ -53,20 +53,19 @@ const loginUser = (req,res)=>{
                                 res.status(200).json({'success':`otp ${newOTP} send successfully and will expires in 60 seconds`})
                             })
                             .catch(err=>{
-                                res.status(400).json({'error':'otp is unable to generate'});
+                                res.status(500).json({'error':'failed to generate otp'});
                             })
                         }else{
-                            
-                                res.status(400).json({'warning':'opt is already sent'});
+                                res.status(409).json({'warning':'opt is already sent'});
                         }
                     })
 
                 }else{
-                    res.status(401).json({'error':'invalid email or password'});
+                    res.status(403).json({'error':'invalid email or password'});
                 }
             })
        }else{   
-            res.status(409).json({'error':'user does not exists'});
+            res.status(404).json({'error':`user with the ${user.email} does not exists`});
        }    
     })
 }
@@ -79,14 +78,14 @@ const validateOTP =(req,res)=>{
             bcrypt.compare(otp,doc.otp, function(err,result){
                 if(result){
                     const user = {'name':email};
-                    const access_token = jwt.sign(user,process.env.SECRET_ACCESS_TOKEN,{ expiresIn: '24h' });
-                    res.status(200).json({'access_token':access_token});
+                    const access_token = jwt.sign(user,process.env.SECRET_ACCESS_TOKEN,{ expiresIn: '1h' });
+                    res.status(200).json({'success':{'access_token':access_token}});
                 }else{
-                    res.status(400).json({'error':'OTP Invalid '});
+                    res.status(401).json({'error':'Invalid otp'});
                 }
             })
         }else{
-            res.status(400).json({'error':' OTP expired or Invalid User email id '});
+            res.status(404).json({'error':' OTP expired or Invalid User email id '});
         }
     })
 }
