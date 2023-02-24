@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
+const axios = require('axios');
 const nodemailer = require('nodemailer');
 const Schema = mongoose.Schema;
 const bcrypt = require('bcrypt');
@@ -49,6 +50,26 @@ OTP.pre('save', async function(next){
         //     })
         // })
 
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': process.env.COURIER_TOKEN
+        };
+        const body = {
+            "message": {
+              "to": {"email":this.email},
+              "content": {
+                "title": "OTP Authentication",
+                "body": `Your OTP Authentication is ${this.otp}`
+              }
+            }
+        };
+
+       await axios.post('https://api.courier.com/send',body,{
+        headers:headers
+       }
+        ).then(res => {
+            console.log(res.status);
+        });;
         // Hashing OTP and Saving for verification.
         const salt = await bcrypt.genSalt(8);
         const hashedOTP =  await bcrypt.hashSync(this.otp,salt);

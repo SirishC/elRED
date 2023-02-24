@@ -48,9 +48,7 @@ const loginUser = (req,res)=>{
                             // Saving to database;
                             optGenerated.save()
                             .then(otp=>{
-                                // Sending mail 
-                                console.log("send otp mail... ");
-                                res.status(200).json({'success':`otp ${newOTP} send successfully and will expires in 60 seconds`})
+                                res.status(200).json({'success':`otp send to email successfully and will expires in 60 seconds`})
                             })
                             .catch(err=>{
                                 res.status(500).json({'error':'failed to generate otp'});
