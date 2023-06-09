@@ -22,8 +22,6 @@ Please implement pagination for the GET & SORT APIs
 
 Note: - You are supposed to create only backend APIs. You need not create Frontend UIs.
 
-We would be assessing this assignment from the POV of a Senior Node.js Developer. Ensure you write clean code, use solid principles and use the latest coding conventions.
-
 --------------------------
 ```
 designing workflow :
